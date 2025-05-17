@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import folder_route
 from app.routes import document_route
 from app.routes import upload_route
+from app.routes import auth_route
+
 app = FastAPI()
 
 app.add_middleware(
@@ -16,6 +18,7 @@ app.add_middleware(
 app.include_router(folder_route.router)
 app.include_router(document_route.router)
 app.include_router(upload_route.router)
+app.include_router(auth_route.router)
 
 @app.get("/")
 def root():
