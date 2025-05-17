@@ -14,7 +14,7 @@ def create_folder(uid:str,name:str) -> dict:
     folders_collection.insert_one(folder_data)
     return folder_data
 
-def get_folder_by_user(uid:str): list:
+def get_folder_by_user(uid:str) -> list:
     return list(folders_collection.find({"uid":uid}))
 
 def update_folder_name(folder_id: str, new_name: str) -> dict:
