@@ -1,20 +1,34 @@
-# app/schemas/document_schema.py
-
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 from datetime import datetime
 
-class DocumentCreate(BaseModel):
-    uid: str
+class DocumentTag(BaseModel):
+    key: str
+    value: str
+
+class DocumentBase(BaseModel):
+    title: str = Field(..., min_length=1)
     folder_id: str
-    title: str
-    file_urls: List[str]
-    tags: Optional[Dict[str, str]] = {}
-    issue_date: Optional[datetime] = None
-    expire_date: Optional[datetime] = None
+    files: List[str]  # URLs of uploaded files
+    tags: Optional[List[DocumentTag]] = []
+    issue_date: Optional[datetime]
+    expiry_date: Optional[datetime]
+
+class DocumentCreate(DocumentBase):
+    uid: str  # User ID
 
 class DocumentUpdate(BaseModel):
     title: Optional[str]
-    tags: Optional[Dict[str, str]]
+    folder_id: Optional[str]
+    files: Optional[List[str]]
+    tags: Optional[List[DocumentTag]]
     issue_date: Optional[datetime]
-    expire_date: Optional[datetime]
+    expiry_date: Optional[datetime]
+
+class DocumentInDB(DocumentBase):
+    document_id: str
+    uid: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True

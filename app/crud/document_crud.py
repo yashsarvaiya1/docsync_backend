@@ -1,42 +1,35 @@
-# app/crud/document_crud.py
-
 from datetime import datetime
-import uuid
 from app.database import documents_collection
+import uuid
 
-def create_document(data: dict) -> dict:
-    doc_data = {
-        "doc_id": str(uuid.uuid4()),
-        "uid": data["uid"],
-        "folder_id": data["folder_id"],
-        "title": data["title"],
-        "file_urls": data["file_urls"],
-        "tags": data.get("tags", {}),
-        "issue_date": data.get("issue_date"),
-        "expire_date": data.get("expire_date"),
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
+def create_document(uid: str, doc_data: dict) -> dict:
+    document = {
+        "document_id": str(uuid.uuid4()),
+        "uid": uid,
+        "title": doc_data["title"],
+        "folder_id": doc_data["folder_id"],
+        "tags": doc_data.get("tags", {}),
+        "issue_date": doc_data.get("issue_date"),
+        "expire_date": doc_data.get("expire_date"),
+        "files": doc_data["files"],
+        "created_at": datetime.utcnow()
     }
-    documents_collection.insert_one(doc_data)
-    return doc_data
+    documents_collection.insert_one(document)
+    return document
 
 def get_documents_by_user(uid: str) -> list:
     return list(documents_collection.find({"uid": uid}))
 
-def get_documents_by_folder(folder_id: str) -> list:
-    return list(documents_collection.find({"folder_id": folder_id}))
+def get_document_by_id(document_id: str) -> dict:
+    return documents_collection.find_one({"document_id": document_id})
 
-def update_document(doc_id: str, updates: dict) -> dict:
-    updates["updated_at"] = datetime.utcnow()
-    result = documents_collection.find_one_and_update(
-        {"doc_id": doc_id},
-        {"$set": updates},
-        return_document=True
+def update_document(document_id: str, update_data: dict) -> dict:
+    documents_collection.update_one(
+        {"document_id": document_id},
+        {"$set": update_data}
     )
-    return result or {"error": "Document not found"}
+    return get_document_by_id(document_id)
 
-def delete_document(doc_id: str) -> dict:
-    result = documents_collection.delete_one({"doc_id": doc_id})
-    if result.deleted_count:
-        return {"status": "Document deleted"}
-    return {"error": "Document not found"}
+def delete_document(document_id: str) -> bool:
+    result = documents_collection.delete_one({"document_id": document_id})
+    return result.deleted_count > 0

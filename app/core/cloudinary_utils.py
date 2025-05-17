@@ -7,7 +7,9 @@ load_dotenv()
 
 cloudinary.config(
     secure=True,
-    cloud_name=os.getenv("CLOUDINARY_URL").split("@")[-1],
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
 )
 
 def upload_file_to_cloudinary(file, folder="docsync"):

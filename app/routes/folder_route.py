@@ -1,27 +1,31 @@
-# app/routes/folder_route.py
-
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from typing import List
+from app.models.folder_model import FolderCreate, FolderUpdate
 from app.crud import folder_crud
-from app.schemas.folder_schema import FolderCreate
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/folders", tags=["Folders"])
 
-@router.post("/")
-def create_folder(folder: FolderCreate):
-    return folder_crud.create_folder(folder.uid, folder.name)
+@router.post("/", response_model=dict)
+def create_folder(payload: FolderCreate, uid: str):
+    folder = folder_crud.create_folder(uid=uid, name=payload.name)
+    return folder
 
-@router.get("/{uid}")
+@router.get("/{uid}", response_model=List[dict])
 def get_folders(uid: str):
-    return folder_crud.get_folders_by_user(uid)
+    folders = folder_crud.get_folders_by_user(uid)
+    return folders
 
-class FolderUpdate(BaseModel):
-    new_name: str
-
-@router.put("/{folder_id}")
+@router.put("/{folder_id}", response_model=dict)
 def update_folder(folder_id: str, payload: FolderUpdate):
-    return folder_crud.update_folder_name(folder_id, payload.new_name)
+    folder = folder_crud.get_folder_by_id(folder_id)
+    if not folder:
+        raise HTTPException(status_code=404, detail="Folder not found")
+    updated = folder_crud.update_folder(folder_id, payload.name)
+    return updated
 
-@router.delete("/{folder_id}")
+@router.delete("/{folder_id}", response_model=dict)
 def delete_folder(folder_id: str):
-    return folder_crud.delete_folder(folder_id)
+    success = folder_crud.delete_folder(folder_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Folder not found")
+    return {"detail": "Folder deleted"}
