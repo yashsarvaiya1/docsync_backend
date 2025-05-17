@@ -1,29 +1,14 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict
+from pydantic import BaseModel
 from datetime import datetime
+from typing import Dict, Optional
 
-class DocumentBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=100)
-    folder_id: str
-    tags: Optional[Dict[str, str]] = None
-    issue_date: Optional[datetime] = None
-    expire_date: Optional[datetime] = None
-
-class DocumentCreate(DocumentBase):
-    files: list[str]  # URLs of uploaded files
-
-class DocumentUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
-    folder_id: Optional[str] = None
-    tags: Optional[Dict[str, str]] = None
-    issue_date: Optional[datetime] = None
-    expire_date: Optional[datetime] = None
-    files: Optional[list[str]] = None
-
-class DocumentInDB(DocumentBase):
-    document_id: str
+class Document(BaseModel):
+    doc_id: str
     uid: str
+    folder_id: str
+    title: str
+    file_url: str
+    tags: Optional[Dict[str, str]]
+    issue_date: Optional[datetime]
+    expiry_date: Optional[datetime]
     created_at: datetime
-
-    class Config:
-        orm_mode = True

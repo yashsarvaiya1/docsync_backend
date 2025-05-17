@@ -1,7 +1,6 @@
-from datetime import datetime
-from bson import ObjectId
-from app.database import folders_collection
 import uuid
+from datetime import datetime
+from app.database import folders_collection
 
 def create_folder(uid: str, name: str) -> dict:
     folder = {
@@ -13,19 +12,13 @@ def create_folder(uid: str, name: str) -> dict:
     folders_collection.insert_one(folder)
     return folder
 
-def get_folders_by_user(uid: str) -> list:
+def get_user_folders(uid: str):
     return list(folders_collection.find({"uid": uid}))
 
-def get_folder_by_id(folder_id: str) -> dict:
-    return folders_collection.find_one({"folder_id": folder_id})
+def update_folder_name(folder_id: str, new_name: str):
+    folders_collection.update_one({"folder_id": folder_id}, {"$set": {"name": new_name}})
+    return {"message": "Folder updated"}
 
-def update_folder(folder_id: str, name: str) -> dict:
-    folders_collection.update_one(
-        {"folder_id": folder_id},
-        {"$set": {"name": name}}
-    )
-    return get_folder_by_id(folder_id)
-
-def delete_folder(folder_id: str) -> bool:
-    result = folders_collection.delete_one({"folder_id": folder_id})
-    return result.deleted_count > 0
+def delete_folder(folder_id: str):
+    folders_collection.delete_one({"folder_id": folder_id})
+    return {"message": "Folder deleted"}

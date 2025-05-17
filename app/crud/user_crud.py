@@ -2,21 +2,21 @@ import uuid
 from datetime import datetime, timedelta
 from app.database import users_collection, auth_codes_collection
 
-async def create_or_get_user(email: str) -> dict:
-    existing = await users_collection.find_one({"email": email})
+def create_or_get_user(email: str) -> dict:
+    existing = users_collection.find_one({"email": email})
     if existing:
         return existing
     user = {
         "uid": str(uuid.uuid4()),
         "email": email,
-        "username": email.split("@")[0],
+        "username": email.split('@')[0],
         "created_at": datetime.utcnow()
     }
-    await users_collection.insert_one(user)
+    users_collection.insert_one(user)
     return user
 
-async def store_otp(email: str, code: str):
-    await auth_codes_collection.update_one(
+def store_otp(email: str, code: str):
+    auth_codes_collection.update_one(
         {"email": email},
         {"$set": {
             "code": code,
@@ -25,8 +25,8 @@ async def store_otp(email: str, code: str):
         upsert=True
     )
 
-async def verify_otp(email: str, code: str) -> bool:
-    record = await auth_codes_collection.find_one({"email": email})
+def verify_otp(email: str, code: str) -> bool:
+    record = auth_codes_collection.find_one({"email": email})
     if not record:
         return False
     if record["code"] != code:

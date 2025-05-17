@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
 
-class FolderCreateSchema(BaseModel):
-    name: str = Field(..., min_length=1, max_length=50)
+class FolderCreate(BaseModel):
+    name: str
+    uid: str
 
-class FolderUpdateSchema(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=50)
+class FolderUpdate(BaseModel):
+    name: Optional[str] = None

@@ -1,20 +1,8 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel
 from datetime import datetime
 
-class FolderBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=50)
-
-class FolderCreate(FolderBase):
-    pass
-
-class FolderUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=50)
-
-class FolderInDB(FolderBase):
-    id: str
+class Folder(BaseModel):
+    folder_id: str
     uid: str
+    name: str
     created_at: datetime
-
-    class Config:
-        orm_mode = True
