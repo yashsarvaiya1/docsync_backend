@@ -12,6 +12,14 @@ def create_doc(payload: DocumentCreate):
 def get_docs(uid: str):
     return document_crud.get_documents(uid)
 
+@router.get("/doc/{doc_id}")
+def get_doc_by_id(doc_id: str):
+    return document_crud.get_document_by_id(doc_id)
+
+@router.get("/folder/{folder_id}")
+def get_docs_by_folder(folder_id: str):
+    return document_crud.get_documents_by_folder(folder_id)
+
 @router.put("/{doc_id}")
 def update_doc(doc_id: str, payload: DocumentUpdate):
     return document_crud.update_document(doc_id, payload.dict(exclude_unset=True))

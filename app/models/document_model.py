@@ -7,7 +7,7 @@ class Document(BaseModel):
     uid: str
     folder_id: str
     title: str
-    file_url: str
+    file_url: List[str]
     tags: Optional[Dict[str, str]]
     issue_date: Optional[datetime]
     expiry_date: Optional[datetime]

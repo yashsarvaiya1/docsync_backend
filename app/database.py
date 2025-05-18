@@ -4,8 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = MongoClient(os.getenv("MONGO_URL"))
-db = client["docsync"]
+client = MongoClient(os.getenv("MONGO_URI"))
+print("MONGO_URI:", os.getenv("MONGO_URI"))
+db = client["docsyncdb"]
 
 users_collection = db["users"]
 folders_collection = db["folders"]
